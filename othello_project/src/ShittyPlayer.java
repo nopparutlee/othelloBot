@@ -19,25 +19,11 @@ public class ShittyPlayer extends Player {
 
     @Override
     public Move move(OthelloState state, HashSet<Move> legalMoves) throws InterruptedException {
-    	double increment = 0.0001;
     	Move best = null;
-        TreeMap<Double,Move> orderMap = new TreeMap<Double,Move>(Collections.reverseOrder());
-        
-        for(Move move: legalMoves) {
-        	double max = minValue(OthelloGame.transition(state, move), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 3);
-        	if(!orderMap.containsKey(max)) {
-        		orderMap.put(max + moveWeight[move.row()][move.col()], move);
-        	}
-        	else {
-        		orderMap.put(max + moveWeight[move.row()][move.col()] + increment, move);
-        		increment += 0.0001;
-        	}
-        }
-        
         double temp = Double.NEGATIVE_INFINITY;
-        for(Move move: orderMap.values()) {
+        for(Move move: legalMoves) {
         	System.out.println(move.toString());
-        	double maxVal = minValue(OthelloGame.transition(state, move), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 6);
+        	double maxVal = minValue(OthelloGame.transition(state, move), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 10);
         	if(temp < maxVal) {
         		temp = maxVal;
         		best = move;
