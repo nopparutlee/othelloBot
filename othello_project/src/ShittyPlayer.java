@@ -13,7 +13,7 @@ public class ShittyPlayer extends Player {
 	
     public ShittyPlayer(byte player) {
         super(player);
-        this.team = "Wankers";
+        this.team = "meme";
         opponent = (player == OthelloGame.B ? OthelloGame.W : OthelloGame.B);
     }
 
@@ -60,6 +60,14 @@ public class ShittyPlayer extends Player {
 		double myScore = 0.0;
 		int myPieces = 0;
 		int enemyLegalMoves = 64;
+		int freeSpaces = 0;
+		for(int i=0;i<OthelloGame.N;i++){
+			for(int j=0;j<OthelloGame.N;j++){
+				if(state.getBoard()[i][j] == OthelloGame.E){
+					freeSpaces++;
+				}
+			}
+		}
 		HashSet<Move> legalMoves = OthelloGame.getAllLegalMoves(state.getBoard(), state.getPlayer());
 		for(Move move:legalMoves){
 			OthelloState nextPossibleState = OthelloGame.transition(state, move);
@@ -69,13 +77,13 @@ public class ShittyPlayer extends Player {
 				enemyPossibleMove = -30;
 			}
 			int possibleMyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), player);
-			if(myScore + myPieces - enemyLegalMoves < moveScore + possibleMyPieces - enemyPossibleMove){
-				myScore = moveScore;
+			if(myScore*1.5 + myPieces - enemyLegalMoves / (freeSpaces / 5) < moveScore*1.5 + possibleMyPieces - enemyPossibleMove / (freeSpaces / 5)){
+				myScore = moveScore*1.5;
 				myPieces = possibleMyPieces;
 				enemyLegalMoves = enemyPossibleMove;
 			}
 		}
-		return myScore + myPieces - enemyLegalMoves;
+		return myScore + myPieces - enemyLegalMoves / (freeSpaces / 5);
 	}
 	
 }
