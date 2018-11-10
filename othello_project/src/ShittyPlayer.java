@@ -58,13 +58,24 @@ public class ShittyPlayer extends Player {
 	
 	private double utility(OthelloState state) {
 		double myScore = 0.0;
+		int myPieces = 0;
+		int enemyLegalMoves = 64;
 		HashSet<Move> legalMoves = OthelloGame.getAllLegalMoves(state.getBoard(), state.getPlayer());
 		for(Move move:legalMoves){
+			OthelloState nextPossibleState = OthelloGame.transition(state, move);
 			double moveScore = moveWeight[move.row()][move.col()];
-			if(myScore < moveScore)
+			int enemyPossibleMove = OthelloGame.getAllLegalMoves(nextPossibleState.getBoard(), opponent).size();
+			if(enemyPossibleMove == 0){
+				enemyPossibleMove = -30;
+			}
+			int possibleMyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), player);
+			if(myScore + myPieces - enemyLegalMoves < moveScore + possibleMyPieces - enemyPossibleMove){
 				myScore = moveScore;
+				myPieces = possibleMyPieces;
+				enemyLegalMoves = enemyPossibleMove;
+			}
 		}
-		return myScore;
+		return myScore + myPieces - enemyLegalMoves;
 	}
 	
 }
