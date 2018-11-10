@@ -307,6 +307,10 @@ public class OthelloGUI extends JPanel {
                     move = (Move) legalMoves.toArray()[rand.nextInt(legalMoves.size())];
                 }
                 System.out.println("Move: " + move);
+                
+                System.out.println("White score: " + whiteScore);
+                System.out.println("Black score: " + blackScore);
+                
                 state = OthelloGame.transition(state, move);
                 legalMoves = OthelloGame.getAllLegalMoves(state.getBoard(), state.getPlayer());
                 if (legalMoves.size() == 0) {
@@ -331,7 +335,7 @@ public class OthelloGUI extends JPanel {
                             sb.append(" (White)");
                         }
                         sb.append(" is out of move!\n");
-                        sb.append("Game Over");
+                        sb.append("Game Over with White score: " + whiteScore + " and Black score: " + blackScore);
                         over = true;
                     }
                     System.out.println(sb.toString());
