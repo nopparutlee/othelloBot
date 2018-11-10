@@ -5,6 +5,8 @@ public class ShittyPlayer extends Player {
 	
 	private static final int LIMIT = 5;
 	byte opponent;
+	int[][] moveWeight = new int[][] {{99,-8,8,6,6,8,-8,99},{-8,-24,-4,-3,-3,-4,-24,-8},{8,-4,7,4,4,7,-4,8},{6,-3,4,0,0,4,-3,6}
+										,{6,-3,4,0,0,4,-3,6},{8,-4,7,4,4,7,-4,8},{-8,-24,-4,-3,-3,-4,-24,-8},{99,-8,8,6,6,8,-8,99}};
 	
     public ShittyPlayer(byte player) {
         super(player);
@@ -53,13 +55,14 @@ public class ShittyPlayer extends Player {
 	}
 	
 	private double utility(OthelloState state) {
-		double myScore = OthelloGame.computeScore(state.getBoard(), player);
-		double opScore = OthelloGame.computeScore(state.getBoard(), opponent);
-		return (100 * (myScore - opScore)) / (myScore + opScore);
+		double myScore = 0.0;
+		HashSet<Move> legalMoves = OthelloGame.getAllLegalMoves(state.getBoard(), state.getPlayer());
+		for(Move move:legalMoves){
+			double moveScore = moveWeight[move.row()][move.col()];
+			if(myScore < moveScore)
+				myScore = moveScore;
+		}
+		return myScore;
 	}
 	
-	private double computeScoreWithHeuristic(OthelloState state){
-		
-		return 0.0;
-	}
 }
