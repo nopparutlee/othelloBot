@@ -8,8 +8,8 @@ public class ShittyPlayer extends Player {
 	
 	private static final int LIMIT = 5;
 	byte opponent;
-	int[][] moveWeight = new int[][] {{99,-8,8,6,6,8,-8,99},{-8,-24,-4,-3,-3,-4,-24,-8},{8,-4,7,4,4,7,-4,8},{6,-3,4,0,0,4,-3,6}
-										,{6,-3,4,0,0,4,-3,6},{8,-4,7,4,4,7,-4,8},{-8,-24,-4,-3,-3,-4,-24,-8},{99,-8,8,6,6,8,-8,99}};
+	int[][] moveWeight = new int[][] {{200,-90,8,6,6,8,-90,200},{-90,-100,-4,-3,-3,-4,-100,-90},{8,-4,7,4,4,7,-4,8},{6,-3,4,0,0,4,-3,6}
+										,{6,-3,4,0,0,4,-3,6},{8,-4,7,4,4,7,-4,8},{-90,-100,-4,-3,-3,-4,-100,-90},{200,-90,8,6,6,8,-90,200}};
 	
     public ShittyPlayer(byte player) {
         super(player);
@@ -60,7 +60,7 @@ public class ShittyPlayer extends Player {
 		double myScore = 0.0;
 		int myPieces = 0;
 		int enemyLegalMoves = 64;
-		int freeSpaces = 0;
+		int freeSpaces = 1;
 		for(int i=0;i<OthelloGame.N;i++){
 			for(int j=0;j<OthelloGame.N;j++){
 				if(state.getBoard()[i][j] == OthelloGame.E){
@@ -77,13 +77,14 @@ public class ShittyPlayer extends Player {
 				enemyPossibleMove = -30;
 			}
 			int possibleMyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), player);
-			if(myScore*1.5 + myPieces - enemyLegalMoves / (freeSpaces / 5) < moveScore*1.5 + possibleMyPieces - enemyPossibleMove / (freeSpaces / 5)){
+			int possibleEnemyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), opponent);
+			if(myScore*1.5 + myPieces - possibleEnemyPieces * enemyLegalMoves / (freeSpaces / 4.0) < moveScore*1.5 + possibleMyPieces - possibleEnemyPieces * enemyPossibleMove / (freeSpaces / 4.0)){
 				myScore = moveScore*1.5;
 				myPieces = possibleMyPieces;
 				enemyLegalMoves = enemyPossibleMove;
 			}
 		}
-		return myScore + myPieces - enemyLegalMoves / (freeSpaces / 5);
+		return myScore + myPieces - enemyLegalMoves / (freeSpaces / 2.5);
 	}
 	
 }
