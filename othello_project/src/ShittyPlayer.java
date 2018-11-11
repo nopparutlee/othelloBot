@@ -68,23 +68,41 @@ public class ShittyPlayer extends Player {
 				}
 			}
 		}
-		HashSet<Move> legalMoves = OthelloGame.getAllLegalMoves(state.getBoard(), state.getPlayer());
-		for(Move move:legalMoves){
-			OthelloState nextPossibleState = OthelloGame.transition(state, move);
-			double moveScore = moveWeight[move.row()][move.col()];
-			int enemyPossibleMove = OthelloGame.getAllLegalMoves(nextPossibleState.getBoard(), opponent).size();
-			if(enemyPossibleMove == 0){
-				enemyPossibleMove = -30;
+		//extra for final push?
+		if(freeSpaces <= LIMIT+3){
+			HashSet<Move> legalMoves = OthelloGame.getAllLegalMoves(state.getBoard(), state.getPlayer());
+			double possibleScore = 0.0;
+			for(Move move:legalMoves){
+				OthelloState nextPossibleState = OthelloGame.transition(state, move);
+				int enemyPossibleMove = OthelloGame.getAllLegalMoves(nextPossibleState.getBoard(), opponent).size();
+				int possibleMyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), player);
+				if(enemyPossibleMove == 0){
+					possibleScore = 50;
+				}
+				if(myScore < possibleScore + possibleMyPieces){
+					myScore = possibleScore + possibleMyPieces;
+				}
 			}
-			int possibleMyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), player);
-			int possibleEnemyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), opponent);
-			if(myScore*1.5 + myPieces - possibleEnemyPieces * enemyLegalMoves / (freeSpaces / 4.0) < moveScore*1.5 + possibleMyPieces - possibleEnemyPieces * enemyPossibleMove / (freeSpaces / 4.0)){
-				myScore = moveScore*1.5;
-				myPieces = possibleMyPieces;
-				enemyLegalMoves = enemyPossibleMove;
+			return myScore;
+		}else{
+			HashSet<Move> legalMoves = OthelloGame.getAllLegalMoves(state.getBoard(), state.getPlayer());
+			for(Move move:legalMoves){
+				OthelloState nextPossibleState = OthelloGame.transition(state, move);
+				double moveScore = moveWeight[move.row()][move.col()];
+				int enemyPossibleMove = OthelloGame.getAllLegalMoves(nextPossibleState.getBoard(), opponent).size();
+				if(enemyPossibleMove == 0){
+					enemyPossibleMove = -30;
+				}
+				int possibleMyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), player);
+				int possibleEnemyPieces = OthelloGame.computeScore(nextPossibleState.getBoard(), opponent);
+				if(myScore*1.5 + myPieces - possibleEnemyPieces * enemyLegalMoves / (freeSpaces / 4.0) < moveScore*1.5 + possibleMyPieces - possibleEnemyPieces * enemyPossibleMove / (freeSpaces / 4.0)){
+					myScore = moveScore*1.5;
+					myPieces = possibleMyPieces;
+					enemyLegalMoves = enemyPossibleMove;
+				}
 			}
+			return myScore + myPieces - enemyLegalMoves / (freeSpaces / 2.5);
 		}
-		return myScore + myPieces - enemyLegalMoves / (freeSpaces / 2.5);
 	}
 	
 }
